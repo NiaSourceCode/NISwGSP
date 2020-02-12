@@ -47,16 +47,22 @@ bool isFileExist (const string & name) {
 
 Parameter::Parameter(const string & _file_name) {
     
+    // file_name = _file_name;
+    // file_dir = "./dataset/" + _file_name + "/";
+    // result_dir = "./dataset/0_results/" + _file_name + "-result/";
+    // 
+    // mkdir("./dataset/0_results/", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    // mkdir(result_dir.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
     file_name = _file_name;
-    file_dir = "./input-42-data/" + _file_name + "/";
-    result_dir = "./input-42-data/0_results/" + _file_name + "-result/";
-    
-    mkdir("./input-42-data/0_results/", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    file_dir = "./dataset/" + _file_name + "/";
+    result_dir = "./dataset/" + _file_name + "_result/";
+    debug_dir = result_dir;
+
     mkdir(result_dir.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 #ifndef NDEBUG
-    debug_dir = "./input-42-data/1_debugs/" + _file_name + "-result/";
-    mkdir("./input-42-data/1_debugs/", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-    mkdir(debug_dir.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    // debug_dir = "./dataset/1_debugs/" + _file_name + "-result/";
+    // mkdir("./dataset/1_debugs/", S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    // mkdir(debug_dir.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 #endif
     
     stitching_parse_file_name = file_dir + _file_name + "-STITCH-GRAPH.txt";

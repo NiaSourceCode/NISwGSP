@@ -86,10 +86,12 @@ const vector<LineData> & ImageData::getLines() const {
     if(img_lines.empty()) {
         const Mat & grey_image = getGreyImage();
         Ptr<LineSegmentDetector> ls = createLineSegmentDetector(LSD_REFINE_STD);
+        // Ptr<cv::ximgproc::FastLineDetector> ls = cv::ximgproc::createFastLineDetector();
         
         vector<Vec4f>  lines;
         vector<double> lines_width, lines_prec, lines_nfa;
         ls->detect(grey_image, lines, lines_width, lines_prec, lines_nfa);
+        // ls->detect(grey_image, lines);
         
         vector<double> lines_length;
         vector<Point2> lines_points[2];
