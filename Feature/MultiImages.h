@@ -155,7 +155,7 @@ public:
     mutable vector<vector<FLOAT_TYPE> > images_minimum_line_distortion_rotation;
     mutable vector<vector<vector<Point2> > > images_lines_projects; /* [m1][m2] img1 lines project on img2 */
     
-    mutable vector<Mat> images;
+    mutable vector<Mat> images;// 貌似没用
 };
 
 #endif /* defined(__UglyMan_Stitiching__MultiImages__) */

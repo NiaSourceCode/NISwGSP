@@ -54,7 +54,7 @@ void MultiImages::doFeatureMatching() const {
     for(int i = 0; i < images_match_graph_pair_list.size(); ++i) {
         const pair<int, int> & match_pair = images_match_graph_pair_list[i];
         const int & m1 = match_pair.first, & m2 = match_pair.second;
-        RED("[%d]-[%d]", m1, m2);
+        RED("%ld %ld", apap_matching_points[m1][m2].size(), apap_matching_points[m2][m1].size());
         APAP_Stitching::apap_project(feature_matches[m1][m2],
                                      feature_matches[m2][m1],
                                      images_data[m1].mesh_2d->getVertices(), apap_matching_points[m1][m2], apap_homographies[m1][m2]);
