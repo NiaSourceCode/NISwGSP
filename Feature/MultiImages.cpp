@@ -69,7 +69,7 @@ void MultiImages::doFeatureMatching() const {
 
     const int pm_index = m1 * (int)images_data.size() + m2;// 像素点总索引
     const int m_index[PAIR_SIZE] = {m2, m1};
-    vector<DMatch> & D_matches = pairwise_matches[pm_index].matches;
+    vector<DMatch> & D_matches = pairwise_matches[pm_index].matches;// 类似于指针
     for(int j = 0; j < PAIR_SIZE; ++j) {
       for(int k = 0; k < out_dst[j]->size(); ++k) {
         if((*out_dst[j])[k].x >= 0 && (*out_dst[j])[k].y >= 0 &&
@@ -93,6 +93,7 @@ void MultiImages::doFeatureMatching() const {
      * TODO
      */
 
+    RED("%ld", pairwise_matches.size());
     RED("%ld %ld", images_data[m1].mesh_2d->getVertices().size(), images_data[m2].mesh_2d->getVertices().size());
     RED("%ld %ld", apap_matching_points[m1][m2].size(), apap_matching_points[m2][m1].size());
 
@@ -109,7 +110,9 @@ void MultiImages::doFeatureMatching() const {
     // imwrite(parameter.debug_dir + "fuck" + to_string(i) + ".png", result);
 
     // 匹配点配对
+    RED("%ld %ld", D_matches.size(), pairwise_matches[pm_index].matches.size());
     RED("[%d, %d]", m1, m2);
+
     Mat img1 = images_data[m1].img;
     Mat img2 = images_data[m2].img;
     Mat result = Mat::zeros(max(img1.rows, img2.rows),
@@ -122,9 +125,16 @@ void MultiImages::doFeatureMatching() const {
     img1.copyTo(left);
     img2.copyTo(right);
     for (int i = 0; i < pairwise_matches[pm_index].matches.size(); i ++) {
-      // if (i > 30) break;
       int src = pairwise_matches[pm_index].matches[i].queryIdx;
       int dest = pairwise_matches[pm_index].matches[i].trainIdx;
+      if (src > dest) {// TODO
+        continue;
+        int tmp = src;
+        src = dest;
+        dest = tmp;
+      }
+      dest -= images_data[m2].mesh_2d->getVertices().size();
+      // CYAN("%d[%d,%d]", i, src, dest);
       Point2 src_p = images_data[m1].mesh_2d->getVertices()[src];
       Point2 dest_p = images_data[m2].mesh_2d->getVertices()[dest];
       Scalar color(rand() % 256, rand() % 256, rand() % 256);
@@ -132,7 +142,7 @@ void MultiImages::doFeatureMatching() const {
       line(result, src_p, dest_p + Point2(img1.cols, 0), color, 1, LINE_AA);
       circle(result, dest_p + Point2(img1.cols, 0), 3, color, -1);
     }
-    imwrite(parameter.debug_dir + "fuck" + to_string(i) + ".png", result);
+    imwrite(parameter.debug_dir + "matching_points" + to_string(i) + ".png", result);
 
     /**
      * TODO end
@@ -141,7 +151,7 @@ void MultiImages::doFeatureMatching() const {
     pairwise_matches[pm_index].confidence  = 2.; /*** need > 1.f ***/
     pairwise_matches[pm_index].src_img_idx = m1;
     pairwise_matches[pm_index].dst_img_idx = m2;
-    pairwise_matches[pm_index].inliers_mask.resize(D_matches.size(), 1);
+    pairwise_matches[pm_index].inliers_mask.resize(D_matches.size(), 1);// 内点
     pairwise_matches[pm_index].num_inliers = (int)D_matches.size();
     pairwise_matches[pm_index].H = apap_homographies[m1][m2].front(); /*** for OpenCV findMaxSpanningTree funtion ***/
   }
