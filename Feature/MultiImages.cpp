@@ -54,6 +54,7 @@ void MultiImages::doFeatureMatching() const {
     for(int i = 0; i < images_match_graph_pair_list.size(); ++i) {
         const pair<int, int> & match_pair = images_match_graph_pair_list[i];
         const int & m1 = match_pair.first, & m2 = match_pair.second;
+        RED("[%d]-[%d]", m1, m2);
         APAP_Stitching::apap_project(feature_matches[m1][m2],
                                      feature_matches[m2][m1],
                                      images_data[m1].mesh_2d->getVertices(), apap_matching_points[m1][m2], apap_homographies[m1][m2]);
@@ -156,6 +157,7 @@ const vector<detail::CameraParams> & MultiImages::getCameraParams() const {
         }
         /********************/
         /*** 3D Rotations ***/
+        RED("fuck your mother");
         vector<vector<Mat> > relative_3D_rotations;
         relative_3D_rotations.resize(images_data.size());
         for(int i = 0; i < relative_3D_rotations.size(); ++i) {
@@ -1086,6 +1088,7 @@ void MultiImages::writeImageOfFeaturePairs(const string & _name,
     
     const vector<Point2> & m1_fpts = images_data[_match_pair.first ].getFeaturePoints();
     const vector<Point2> & m2_fpts = images_data[_match_pair.second].getFeaturePoints();
+    RED("%ld %ld", m1_fpts.size(), m2_fpts.size());
     vector<Point2> f1, f2;
     f1.reserve(_pairs.size());
     f2.reserve(_pairs.size());

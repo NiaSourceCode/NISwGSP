@@ -111,7 +111,7 @@ public:
     
     vector<ImageData> images_data;
     Parameter parameter;
-private:    
+// private:    
     /*** Debugger ***/
     void writeImageOfFeaturePairs(const string & _name,
                                   const pair<int, int> & _index_pair,

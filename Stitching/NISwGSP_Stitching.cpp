@@ -45,6 +45,7 @@ Mat NISwGSP_Stitching::solve(const BLENDING_METHODS & _blend_method) {
     vector<vector<Point2> > original_vertices;
 
     original_vertices = getImageVerticesBySolving(triplets, b_vector);
+    RED("%ld %ld", original_vertices.size(), original_vertices[0].size());
     
     Size2 target_size = normalizeVertices(original_vertices);
     

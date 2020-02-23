@@ -30,6 +30,13 @@ int main(int argc, const char * argv[]) {
     niswgsp.setWeightToGlobalSimilarityTerm(6, 20, GLOBAL_ROTATION_2D_METHOD);
     // niswgsp.writeImage(niswgsp.solve(BLEND_AVERAGE), BLENDING_METHODS_NAME[BLEND_AVERAGE]);
     niswgsp.writeImage(niswgsp.solve(BLEND_LINEAR),  BLENDING_METHODS_NAME[BLEND_LINEAR]);
+
+    // TODO
+    RED("%ld", multi_images.apap_matching_points.size());// 和图片数相等
+    RED("%ld %ld", multi_images.apap_matching_points[0][1].size()
+        , multi_images.apap_matching_points[1][0].size());
+    // TODO end
+
     /* 3D */
     // niswgsp.setWeightToAlignmentTerm(1);
     // niswgsp.setWeightToLocalSimilarityTerm(0.75);

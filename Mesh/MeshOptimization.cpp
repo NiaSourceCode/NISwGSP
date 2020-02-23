@@ -246,6 +246,7 @@ int MeshOptimization::getAlignmentTermEquationsCount() const {
         const int pm_index = m1 * (int)multi_images->images_data.size() + m2;
         result += pairwise_matches[pm_index].matches.size();
     }
+    RED("%d", images_match_graph_pair_list.size());
     return result * DIMENSION_2D;
 }
 
