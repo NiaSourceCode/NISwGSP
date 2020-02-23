@@ -96,22 +96,48 @@ void MultiImages::doFeatureMatching() const {
     RED("%ld %ld", images_data[m1].mesh_2d->getVertices().size(), images_data[m2].mesh_2d->getVertices().size());
     RED("%ld %ld", apap_matching_points[m1][m2].size(), apap_matching_points[m2][m1].size());
 
-    Mat result = Mat::zeros(images_data[0].img.rows, images_data[0].img.cols, CV_8UC3);
-    images_data[0].img.copyTo(result);
-    for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
-      circle(result,
-             images_data[m1].mesh_2d->getVertices()[i],
-             3,// 半径
-             Scalar(255, 255, 0),
-             -1);// 实心
+    // 所有匹配点
+    // Mat result = Mat::zeros(images_data[0].img.rows, images_data[0].img.cols, CV_8UC3);
+    // images_data[0].img.copyTo(result);
+    // for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
+    //   circle(result,
+    //          images_data[m1].mesh_2d->getVertices()[i],
+    //          3,// 半径
+    //          Scalar(255, 255, 0),
+    //          -1);// 实心
+    // }
+    // imwrite(parameter.debug_dir + "fuck" + to_string(i) + ".png", result);
+
+    // 匹配点配对
+    RED("[%d, %d]", m1, m2);
+    Mat img1 = images_data[m1].img;
+    Mat img2 = images_data[m2].img;
+    Mat result = Mat::zeros(max(img1.rows, img2.rows),
+                            img1.cols + img2.cols,
+                            CV_8UC3);
+    // 分割矩阵
+    Mat left (result, Rect(0, 0, img1.cols, img1.rows));
+    Mat right(result, Rect(img1.cols, 0, img2.cols, img2.rows));
+    // 复制矩阵
+    img1.copyTo(left);
+    img2.copyTo(right);
+    for (int i = 0; i < pairwise_matches[pm_index].matches.size(); i ++) {
+      // if (i > 30) break;
+      int src = pairwise_matches[pm_index].matches[i].queryIdx;
+      int dest = pairwise_matches[pm_index].matches[i].trainIdx;
+      Point2 src_p = images_data[m1].mesh_2d->getVertices()[src];
+      Point2 dest_p = images_data[m2].mesh_2d->getVertices()[dest];
+      Scalar color(rand() % 256, rand() % 256, rand() % 256);
+      circle(result, src_p, 3, color, -1);
+      line(result, src_p, dest_p + Point2(img1.cols, 0), color, 1, LINE_AA);
+      circle(result, dest_p + Point2(img1.cols, 0), 3, color, -1);
     }
     imwrite(parameter.debug_dir + "fuck" + to_string(i) + ".png", result);
-    RED("%d", pm_index);
 
     /**
      * TODO end
      */
-     
+
     pairwise_matches[pm_index].confidence  = 2.; /*** need > 1.f ***/
     pairwise_matches[pm_index].src_img_idx = m1;
     pairwise_matches[pm_index].dst_img_idx = m2;
