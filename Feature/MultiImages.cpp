@@ -150,6 +150,7 @@ void MultiImages::doFeatureMatching() const {
     imwrite(parameter.debug_dir + "pairwise_matching_pts" + to_string(i) + "_1.png", result_1);
     imwrite(parameter.debug_dir + "pairwise_matching_pts" + to_string(i) + "_2.png", result_2);
 
+
     // 描绘所有匹配点
     // 初始化
     result_1 = Mat::zeros(max(img1.rows, img2.rows),
@@ -170,11 +171,40 @@ void MultiImages::doFeatureMatching() const {
     img1.copyTo(right_3);
 
     for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
-      circle(result_1, apap_matching_points[m1][m2][i], 3, Scalar(255, 0, 0), -1);
+      circle(result_1, apap_matching_points[m1][m2][i] + Point2(img1.cols, 0), 3, Scalar(255, 0, 0), -1);
       circle(result_2, apap_matching_points[m2][m1][i] + Point2(img1.cols, 0), 3, Scalar(255, 0, 0), -1);
     }
     imwrite(parameter.debug_dir + "matching_pts" + to_string(i) + "_1.png", result_1);
     imwrite(parameter.debug_dir + "matching_pts" + to_string(i) + "_2.png", result_2);
+
+
+    // 描绘所有mesh
+    // 初始化
+    result_1 = Mat::zeros(max(img1.rows, img2.rows),
+                            img1.cols + img2.cols,
+                            CV_8UC3);
+    result_2 = Mat::zeros(max(img2.rows, img1.rows),
+                            img2.cols + img1.cols,
+                            CV_8UC3);
+    // 分割矩阵
+    left_2  = Mat(result_1, Rect(0, 0, img1.cols, img1.rows));
+    right_2 = Mat(result_1, Rect(img1.cols, 0, img2.cols, img2.rows));
+    left_3  = Mat(result_2, Rect(0, 0, img2.cols, img2.rows));
+    right_3 = Mat(result_2, Rect(img2.cols, 0, img1.cols, img1.rows));
+    // 复制矩阵
+    img1.copyTo(left_2);
+    img2.copyTo(right_2);
+    img2.copyTo(left_3);
+    img1.copyTo(right_3);
+
+    for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
+      circle(result_1, images_data[m1].mesh_2d->getVertices(), 3, Scalar(255, 0, 0), -1);
+    }
+    for (int i = 0; i < images_data[m2].mesh_2d->getVertices().size(); i ++) {
+      circle(result_2, images_data[m2].mesh_2d->getVertices(), 3, Scalar(255, 0, 0), -1);
+    }
+    imwrite(parameter.debug_dir + "mesh_pts" + to_string(i) + "_1.png", result_1);
+    imwrite(parameter.debug_dir + "mesh_pts" + to_string(i) + "_2.png", result_2);
 
     /**
      * TODO end
