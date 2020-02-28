@@ -198,10 +198,10 @@ void MultiImages::doFeatureMatching() const {
     img1.copyTo(right_3);
 
     for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
-      circle(result_1, images_data[m1].mesh_2d->getVertices(), 3, Scalar(255, 0, 0), -1);
+      circle(result_1, images_data[m1].mesh_2d->getVertices()[i], 3, Scalar(255, 0, 0), -1);
     }
     for (int i = 0; i < images_data[m2].mesh_2d->getVertices().size(); i ++) {
-      circle(result_2, images_data[m2].mesh_2d->getVertices(), 3, Scalar(255, 0, 0), -1);
+      circle(result_2, images_data[m2].mesh_2d->getVertices()[i], 3, Scalar(255, 0, 0), -1);
     }
     imwrite(parameter.debug_dir + "mesh_pts" + to_string(i) + "_1.png", result_1);
     imwrite(parameter.debug_dir + "mesh_pts" + to_string(i) + "_2.png", result_2);
