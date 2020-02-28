@@ -67,10 +67,10 @@ void MultiImages::doFeatureMatching() const {
     apap_overlap_mask[m1][m2].resize(apap_homographies[m1][m2].size(), false);
     apap_overlap_mask[m2][m1].resize(apap_homographies[m2][m1].size(), false);
 
-    const int pm_index = m1 * (int)images_data.size() + m2;// 像素点总索引
-    const int m_index[PAIR_SIZE] = {m2, m1};
-    vector<DMatch> & D_matches = pairwise_matches[pm_index].matches;// 类似于指针
-    for(int j = 0; j < PAIR_SIZE; ++j) {
+    const int pm_index = m1 * (int)images_data.size() + m2;// TODO
+    const int m_index[PAIR_SIZE] = {m2, m1};// 换顺序
+    vector<DMatch> & D_matches = pairwise_matches[pm_index].matches;// 引用
+    for(int j = 0; j < PAIR_SIZE; ++j) {// 一次正,一次反
       for(int k = 0; k < out_dst[j]->size(); ++k) {
         if((*out_dst[j])[k].x >= 0 && (*out_dst[j])[k].y >= 0 &&
             (*out_dst[j])[k].x <= images_data[m_index[j]].img.cols &&
@@ -79,12 +79,13 @@ void MultiImages::doFeatureMatching() const {
             apap_overlap_mask[m2][m1][k] = true;
             D_matches.emplace_back(images_features[m_index[j]].keypoints.size(), k, 0);
             images_features_mask[m2][k] = true;
-          } else {
+          } else {// m1 -> m2
             apap_overlap_mask[m1][m2][k] = true;
             D_matches.emplace_back(k, images_features[m_index[j]].keypoints.size(), 0);
             images_features_mask[m1][k] = true;
           }
-          images_features[m_index[j]].keypoints.emplace_back((*out_dst[j])[k], 0);
+          RED("%d %d %d", j, k, images_features[m_index[j]].keypoints.size());
+          images_features[m_index[j]].keypoints.emplace_back((*out_dst[j])[k], 0);// 将对应图片的第k个加入到最后一个
         }
       }
     }
@@ -110,11 +111,15 @@ void MultiImages::doFeatureMatching() const {
     // imwrite(parameter.debug_dir + "fuck" + to_string(i) + ".png", result);
 
     // 匹配点配对
+
+    int left_num = m2;
+    int right_num = m1;
+
     RED("%ld %ld", D_matches.size(), pairwise_matches[pm_index].matches.size());
     RED("[%d, %d]", m1, m2);
 
-    Mat img1 = images_data[m1].img;
-    Mat img2 = images_data[m2].img;
+    Mat img1 = images_data[left_num].img;
+    Mat img2 = images_data[right_num].img;
     Mat result = Mat::zeros(max(img1.rows, img2.rows),
                             img1.cols + img2.cols,
                             CV_8UC3);
@@ -127,16 +132,14 @@ void MultiImages::doFeatureMatching() const {
     for (int i = 0; i < pairwise_matches[pm_index].matches.size(); i ++) {
       int src = pairwise_matches[pm_index].matches[i].queryIdx;
       int dest = pairwise_matches[pm_index].matches[i].trainIdx;
-      if (src > dest) {// TODO
+      if (src < dest) {// TODO
         continue;
-        int tmp = src;
-        src = dest;
-        dest = tmp;
       }
-      dest -= images_data[m2].mesh_2d->getVertices().size();
+      // dest -= images_data[right_num].mesh_2d->getVertices().size();
       // CYAN("%d[%d,%d]", i, src, dest);
-      Point2 src_p = images_data[m1].mesh_2d->getVertices()[src];
-      Point2 dest_p = images_data[m2].mesh_2d->getVertices()[dest];
+      Point2 src_p = images_data[left_num].mesh_2d->getVertices()[dest];
+      Point2 dest_p = apap_matching_points[left_num][right_num][dest];
+      // Point2 dest_p = images_features[left_num].keypoints[dest].pt;
       Scalar color(rand() % 256, rand() % 256, rand() % 256);
       circle(result, src_p, 3, color, -1);
       line(result, src_p, dest_p + Point2(img1.cols, 0), color, 1, LINE_AA);

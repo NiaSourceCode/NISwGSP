@@ -49,7 +49,26 @@ Mat NISwGSP_Stitching::solve(const BLENDING_METHODS & _blend_method) {
     
     Size2 target_size = normalizeVertices(original_vertices);
     
+    /**
+     * TODO
+     */
+
+    // 所有匹配点
+    // Mat my_result = Mat::zeros(target_size, CV_8UC3);
+    // for (int i = 0; i < original_vertices.size(); i ++) {
+    //   for (int j = 0; j < original_vertices[i].size(); j ++) {
+    //     Scalar color(rand() % 256, rand() % 256, rand() % 256);
+    //     circle(my_result, original_vertices[i][j], 3, color, -1);
+    //   }
+    // }
+    // imwrite(multi_images.parameter.debug_dir + "shit.jpg", my_result);
+
+    /**
+     * TODO end
+     */
+
     Mat result = multi_images.textureMapping(original_vertices, target_size, _blend_method);
+
 #ifndef NDEBUG
     multi_images.writeResultWithMesh(result, original_vertices, "-[NISwGSP]" +
                                      GLOBAL_ROTATION_METHODS_NAME[getGlobalRotationMethod()] +
