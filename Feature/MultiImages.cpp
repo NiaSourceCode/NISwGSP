@@ -84,7 +84,6 @@ void MultiImages::doFeatureMatching() const {
             D_matches.emplace_back(k, images_features[m_index[j]].keypoints.size(), 0);
             images_features_mask[m1][k] = true;
           }
-          RED("%d %d %d", j, k, images_features[m_index[j]].keypoints.size());
           images_features[m_index[j]].keypoints.emplace_back((*out_dst[j])[k], 0);// 将对应图片的第k个加入到最后一个
         }
       }
@@ -98,55 +97,84 @@ void MultiImages::doFeatureMatching() const {
     RED("%ld %ld", images_data[m1].mesh_2d->getVertices().size(), images_data[m2].mesh_2d->getVertices().size());
     RED("%ld %ld", apap_matching_points[m1][m2].size(), apap_matching_points[m2][m1].size());
 
-    // 所有匹配点
-    Mat result = Mat::zeros(images_data[0].img.rows, images_data[0].img.cols, CV_8UC3);
-    images_data[0].img.copyTo(result);
-    for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
-      circle(result,
-            apap_matching_points[m1][m2][i],
-            //  images_data[m1].mesh_2d->getVertices()[i],
-             3,// 半径
-             Scalar(255, 255, 0),
-             -1);// 实心
-    }
-    imwrite(parameter.debug_dir + "matching_pts" + to_string(i) + ".png", result);
-
-    // 匹配点配对
-
-    int left_num = m2;
-    int right_num = m1;
-
     RED("%ld %ld", D_matches.size(), pairwise_matches[pm_index].matches.size());
     RED("[%d, %d]", m1, m2);
 
-    Mat img1 = images_data[left_num].img;
-    Mat img2 = images_data[right_num].img;
-    Mat result = Mat::zeros(max(img1.rows, img2.rows),
+    Mat img1 = images_data[m1].img;
+    Mat img2 = images_data[m2].img;
+    Mat result_1, result_2;
+    Mat left_2, right_2, left_3, right_3;
+
+    // 初始化
+    result_1 = Mat::zeros(max(img1.rows, img2.rows),
                             img1.cols + img2.cols,
                             CV_8UC3);
+    result_2 = Mat::zeros(max(img2.rows, img1.rows),
+                            img2.cols + img1.cols,
+                            CV_8UC3);
     // 分割矩阵
-    Mat left (result, Rect(0, 0, img1.cols, img1.rows));
-    Mat right(result, Rect(img1.cols, 0, img2.cols, img2.rows));
+    left_2 (result_1, Rect(0, 0, img1.cols, img1.rows));
+    right_2(result_1, Rect(img1.cols, 0, img2.cols, img2.rows));
+    left_3 (result_2, Rect(0, 0, img2.cols, img2.rows));
+    right_3(result_2, Rect(img2.cols, 0, img1.cols, img1.rows));
     // 复制矩阵
-    img1.copyTo(left);
-    img2.copyTo(right);
+    img1.copyTo(left_2);
+    img2.copyTo(right_2);
+    img2.copyTo(left_3);
+    img1.copyTo(right_3);
     for (int i = 0; i < pairwise_matches[pm_index].matches.size(); i ++) {
       int src = pairwise_matches[pm_index].matches[i].queryIdx;
       int dest = pairwise_matches[pm_index].matches[i].trainIdx;
-      if (src < dest) {// TODO
-        continue;
+
+      Point2 src_p, dest_p;
+      if (src < dest) {// m1 在左侧
+        src_p = images_data[m1].mesh_2d->getVertices()[src];
+        dest_p = apap_matching_points[m1][m2][src];
+
+        Scalar color(rand() % 256, rand() % 256, rand() % 256);
+        // Scalar color(255, 0, 0);
+        circle(result_1, src_p, 3, color, -1);
+        line(result_1, src_p, dest_p + Point2(img1.cols, 0), color, 1, LINE_AA);
+        circle(result_1, dest_p + Point2(img1.cols, 0), 3, color, -1);
+      } else {// m1 在右侧
+        src_p = images_data[m2].mesh_2d->getVertices()[dest];
+        dest_p = apap_matching_points[m2][m1][dest];
+
+        Scalar color(rand() % 256, rand() % 256, rand() % 256);
+        circle(result_2, src_p, 3, color, -1);
+        line(result_2, src_p, dest_p + Point2(img1.cols, 0), color, 1, LINE_AA);
+        circle(result_2, dest_p + Point2(img1.cols, 0), 3, color, -1);
       }
-      // dest -= images_data[right_num].mesh_2d->getVertices().size();
-      // CYAN("%d[%d,%d]", i, src, dest);
-      Point2 src_p = images_data[left_num].mesh_2d->getVertices()[dest];
-      Point2 dest_p = apap_matching_points[left_num][right_num][dest];
-      // Point2 dest_p = images_features[left_num].keypoints[dest].pt;
-      Scalar color(rand() % 256, rand() % 256, rand() % 256);
-      circle(result, src_p, 3, color, -1);
-      line(result, src_p, dest_p + Point2(img1.cols, 0), color, 1, LINE_AA);
-      circle(result, dest_p + Point2(img1.cols, 0), 3, color, -1);
     }
-    imwrite(parameter.debug_dir + "pairwise_matching_pts" + to_string(i) + ".png", result);
+
+    imwrite(parameter.debug_dir + "pairwise_matching_pts" + to_string(i) + "_1.png", result_1);
+    imwrite(parameter.debug_dir + "pairwise_matching_pts" + to_string(i) + "_2.png", result_2);
+
+    // 描绘所有匹配点
+    // 初始化
+    result_1 = Mat::zeros(max(img1.rows, img2.rows),
+                            img1.cols + img2.cols,
+                            CV_8UC3);
+    result_2 = Mat::zeros(max(img2.rows, img1.rows),
+                            img2.cols + img1.cols,
+                            CV_8UC3);
+    // 分割矩阵
+    left_2 (result_1, Rect(0, 0, img1.cols, img1.rows));
+    right_2(result_1, Rect(img1.cols, 0, img2.cols, img2.rows));
+    left_3 (result_2, Rect(0, 0, img2.cols, img2.rows));
+    right_3(result_2, Rect(img2.cols, 0, img1.cols, img1.rows));
+    // 复制矩阵
+    img1.copyTo(left_2);
+    img2.copyTo(right_2);
+    img2.copyTo(left_3);
+    img1.copyTo(right_3);
+
+    for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
+      circle(result_1, apap_matching_points[m1][m2][i] + Point2(img1.cols, 0), 3, Scalar(255, 0, 0), -1);
+      circle(result_2, apap_matching_points[m2][m1][i] + Point2(img1.cols, 0), 3, Scalar(255, 0, 0), -1);
+    }
+    imwrite(parameter.debug_dir + "matching_pts" + to_string(i) + "_2.png", result_2);
+    imwrite(parameter.debug_dir + "matching_pts" + to_string(i) + "_1.png", result_1);
 
     /**
      * TODO end
