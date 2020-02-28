@@ -99,16 +99,17 @@ void MultiImages::doFeatureMatching() const {
     RED("%ld %ld", apap_matching_points[m1][m2].size(), apap_matching_points[m2][m1].size());
 
     // 所有匹配点
-    // Mat result = Mat::zeros(images_data[0].img.rows, images_data[0].img.cols, CV_8UC3);
-    // images_data[0].img.copyTo(result);
-    // for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
-    //   circle(result,
-    //          images_data[m1].mesh_2d->getVertices()[i],
-    //          3,// 半径
-    //          Scalar(255, 255, 0),
-    //          -1);// 实心
-    // }
-    // imwrite(parameter.debug_dir + "fuck" + to_string(i) + ".png", result);
+    Mat result = Mat::zeros(images_data[0].img.rows, images_data[0].img.cols, CV_8UC3);
+    images_data[0].img.copyTo(result);
+    for (int i = 0; i < images_data[m1].mesh_2d->getVertices().size(); i ++) {
+      circle(result,
+            apap_matching_points[m1][m2][i],
+            //  images_data[m1].mesh_2d->getVertices()[i],
+             3,// 半径
+             Scalar(255, 255, 0),
+             -1);// 实心
+    }
+    imwrite(parameter.debug_dir + "matching_pts" + to_string(i) + ".png", result);
 
     // 匹配点配对
 
@@ -145,7 +146,7 @@ void MultiImages::doFeatureMatching() const {
       line(result, src_p, dest_p + Point2(img1.cols, 0), color, 1, LINE_AA);
       circle(result, dest_p + Point2(img1.cols, 0), 3, color, -1);
     }
-    imwrite(parameter.debug_dir + "matching_points" + to_string(i) + ".png", result);
+    imwrite(parameter.debug_dir + "pairwise_matching_pts" + to_string(i) + ".png", result);
 
     /**
      * TODO end
