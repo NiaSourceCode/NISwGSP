@@ -97,8 +97,7 @@ void MultiImages::doFeatureMatching() const {
     RED("%ld %ld", images_data[m1].mesh_2d->getVertices().size(), images_data[m2].mesh_2d->getVertices().size());
     RED("%ld %ld", apap_matching_points[m1][m2].size(), apap_matching_points[m2][m1].size());
 
-    RED("%ld %ld", D_matches.size(), pairwise_matches[pm_index].matches.size());
-    RED("[%d, %d]", m1, m2);
+    // RED("[%d, %d]", m1, m2);
 
     Mat img1 = images_data[m1].img;
     Mat img2 = images_data[m2].img;

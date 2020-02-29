@@ -13,6 +13,7 @@ void APAP_Stitching::apap_project(const vector<Point2> & _p_src,
                                   const vector<Point2> & _src,
                                   vector<Point2>       & _dst,
                                   vector<Mat>          & _homographies) {
+    RED("APAP");
     vector<Point2> nf1, nf2, cf1, cf2;
     Mat N1, N2, C1, C2;
     N1 = getNormalize2DPts(_p_src, nf1);
@@ -71,7 +72,7 @@ void APAP_Stitching::apap_project(const vector<Point2> & _p_src,
         H = C2.inv() * H * C1;
         H = N2.inv() * H * N1;
 
-        _dst.emplace_back(applyTransform3x3(_src[i].x, _src[i].y, H));
+        _dst.emplace_back(applyTransform3x3(_src[i].x, _src[i].y, H));// 对应 apap 的 apply_mdlt_transform
         _homographies.emplace_back(H);
     }
 }
