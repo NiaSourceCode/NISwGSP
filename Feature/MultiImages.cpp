@@ -277,7 +277,7 @@ const vector<detail::CameraParams> & MultiImages::getCameraParams() const {
     }
     /********************/
     /*** 3D Rotations ***/
-    RED("fuck your mother");
+    RED("3D rotations");
     vector<vector<Mat> > relative_3D_rotations;
     relative_3D_rotations.resize(images_data.size());
     for(int i = 0; i < relative_3D_rotations.size(); ++i) {

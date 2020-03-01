@@ -61,6 +61,7 @@ enum GLOBAL_ROTATION_METHODS MeshOptimization::getGlobalRotationMethod() const {
 void MeshOptimization::reserveData(vector<Triplet<double> > & _triplets,
     vector<pair<int, double> > & _b_vector,
     const int _start_index) {
+  RED("reserveData");
   int equation = _start_index;
   const bool alignment_term = alignment_weight;
   const bool local_similarity_term = local_similarity_weight;
@@ -138,7 +139,7 @@ void MeshOptimization::prepareSimilarityTerm(vector<Triplet<double> > & _triplet
     const vector<vector<double> > & images_grid_space_matching_pts_weight = multi_images->getImagesGridSpaceMatchingPointsWeight(global_similarity_weight_gamma);
     const vector<SimilarityElements> & images_similarity_elements = multi_images->getImagesSimilarityElements(global_rotation_method);
     int eq_count = 0, eq_count_rotation = 0;
-    for(int i = 0; i < multi_images->images_data.size(); ++i) {
+    for(int i = 0; i < multi_images->images_data.size(); ++i) {// 1 -> N, 所有图片数
       const vector<Edge> & edges = multi_images->images_data[i].mesh_2d->getEdges();
       const vector<Point2> & vertices = multi_images->images_data[i].mesh_2d->getVertices();
       const vector<Indices> & v_neighbors = multi_images->images_data[i].mesh_2d->getVertexStructures();
@@ -149,7 +150,7 @@ void MeshOptimization::prepareSimilarityTerm(vector<Triplet<double> > & _triplet
         images_similarity_elements[i].scale * sin(images_similarity_elements[i].theta)
       };
 
-      for(int j = 0; j < edges.size(); ++j) {
+      for(int j = 0; j < edges.size(); ++j) {// 所有边数
         const int & ind_e1 = edges[j].indices[0];
         const int & ind_e2 = edges[j].indices[1];
         const Point2 & src = multi_images->images_data[i].mesh_2d->getVertices()[ind_e1];
@@ -172,7 +173,7 @@ void MeshOptimization::prepareSimilarityTerm(vector<Triplet<double> > & _triplet
           E.at<double>(DIMENSION_2D * p + 1, 0) =  e.y;
           E.at<double>(DIMENSION_2D * p + 1, 1) = -e.x;
         }
-        transpose(E, Et);
+        transpose(E, Et);// 转置
         Point2 e_main = dst - src;
         E_Main.at<double>(0, 0) =  e_main.x;
         E_Main.at<double>(0, 1) =  e_main.y;

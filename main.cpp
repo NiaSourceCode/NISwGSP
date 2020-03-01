@@ -26,44 +26,14 @@ int main(int argc, const char * argv[]) {
     /* 2D */
     NISwGSP_Stitching niswgsp(multi_images);
     niswgsp.setWeightToAlignmentTerm(1);
-    niswgsp.setWeightToLocalSimilarityTerm(0.75);
+    niswgsp.setWeightToLocalSimilarityTerm(0.56);
+    // niswgsp.setWeightToLocalSimilarityTerm(0.75);
     niswgsp.setWeightToGlobalSimilarityTerm(6, 20, GLOBAL_ROTATION_2D_METHOD);
+    // niswgsp.setWeightToGlobalSimilarityTerm(6, 20, GLOBAL_ROTATION_2D_METHOD);
+    
     // niswgsp.writeImage(niswgsp.solve(BLEND_AVERAGE), BLENDING_METHODS_NAME[BLEND_AVERAGE]);
     Mat result_linear = niswgsp.solve(BLEND_LINEAR);
     niswgsp.writeImage(result_linear,  BLENDING_METHODS_NAME[BLEND_LINEAR]);
-
-    /** 
-     * TODO
-     */
-
-    const vector<pair<int, int> > & images_match_graph_pair_list = multi_images.parameter.getImagesMatchGraphPairList();
-    for (int i = 0; i < images_match_graph_pair_list.size(); i ++) {
-      const pair<int, int> & match_pair = images_match_graph_pair_list[i];
-      const int m1 = match_pair.first;
-      const int m2 = match_pair.second;
-      const vector<detail::MatchesInfo> & pairwise_matches = multi_images.getPairwiseMatchesByMatchingPoints();
-      // 绘制矩阵
-      Mat img1 = multi_images.images_data[m1].img;
-      Mat img2 = multi_images.images_data[m2].img;
-      Mat result = Mat::zeros(max(img1.rows, img2.rows), img1.cols + img2.cols, CV_8UC3);
-      Mat left (result, Rect(0, 0, img1.cols, img1.rows));
-      Mat right(result, Rect(img1.cols, 0, img2.cols, img2.rows));
-      img1.copyTo(left);
-      img2.copyTo(right);
-      // 获取匹配信息
-      const int pm_index = m1 * (int)multi_images.images_data.size() + m2;
-      for (int j = 0; j < pairwise_matches[pm_index].matches.size(); j ++) {
-        DMatch my_match = pairwise_matches[pm_index].matches[j];
-        int src = my_match.queryIdx;
-        int dest = my_match.trainIdx;
-        int num = my_match.imgIdx;
-        // CYAN("[%d %d %d %d]", j, src, dest, num);
-      }
-    }
-
-    /**
-     *  TODO end
-     */
 
     /* 3D */
     // niswgsp.setWeightToAlignmentTerm(1);
