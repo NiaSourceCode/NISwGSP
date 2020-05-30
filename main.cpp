@@ -28,7 +28,7 @@ int main(int argc, const char * argv[]) {
     niswgsp.setWeightToAlignmentTerm(1);
     niswgsp.setWeightToLocalSimilarityTerm(0.56);
     // niswgsp.setWeightToLocalSimilarityTerm(0.75);
-    niswgsp.setWeightToGlobalSimilarityTerm(6, 20, GLOBAL_ROTATION_2D_METHOD);
+    niswgsp.setWeightToGlobalSimilarityTerm(6, 20, GLOBAL_ROTATION_3D_METHOD);
     // niswgsp.setWeightToGlobalSimilarityTerm(6, 20, GLOBAL_ROTATION_2D_METHOD);
     
     // niswgsp.writeImage(niswgsp.solve(BLEND_AVERAGE), BLENDING_METHODS_NAME[BLEND_AVERAGE]);

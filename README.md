@@ -51,3 +51,7 @@ vl/mathop.h:92:37: error: ‘vl_infinity_d’ not specified in enclosing ‘para
 ### 使用
 
 - 测试图片的相对路径设置在`Stitching/Parameter.cpp`设置
+
+## git reflog
+
+- `19e67f0a8eac2b9eab`

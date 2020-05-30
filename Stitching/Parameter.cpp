@@ -101,6 +101,14 @@ Parameter::Parameter(const string & _file_name) {
       }
     }
 
+    // TODO ****************************
+    for (int i = 0; i < images_count; i ++) {
+      for (int j = 0; j < images_count; j ++) {
+        printf("%d%c", images_match_graph_manually[i][j], j == images_count - 1 ? ' ' : '\n');
+      }
+    }
+    // TODO ****************************
+
     /*** check ***/
     queue<int> que;
     vector<bool> label(images_count, false);
@@ -152,6 +160,9 @@ const vector<pair<int, int> > & Parameter::getImagesMatchGraphPairList() const {
         }
       }
     }
+  }
+  for (int i = 0; i < images_match_graph_pair_list.size(); i ++) {
+    RED("%d %d", images_match_graph_pair_list[i].first, images_match_graph_pair_list[i].second);
   }
   return images_match_graph_pair_list;
 }
