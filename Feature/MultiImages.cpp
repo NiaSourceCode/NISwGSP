@@ -93,7 +93,6 @@ void MultiImages::doFeatureMatching() const {
      * TODO
      */
 
-    RED("%ld", pairwise_matches.size());
     RED("%ld %ld", images_data[m1].mesh_2d->getVertices().size(), images_data[m2].mesh_2d->getVertices().size());
     RED("%ld %ld", apap_matching_points[m1][m2].size(), apap_matching_points[m2][m1].size());
 
@@ -274,10 +273,10 @@ const vector<detail::CameraParams> & MultiImages::getCameraParams() const {
       } else {
         Statistics::getMedianWithoutCopyData(image_focal_candidates[i], camera_params[i].focal);
       }
+      RED("[%d]: %lf", i, camera_params[i].focal);
     }
     /********************/
     /*** 3D Rotations ***/
-    RED("3D rotations");
     vector<vector<Mat> > relative_3D_rotations;
     relative_3D_rotations.resize(images_data.size());
     for(int i = 0; i < relative_3D_rotations.size(); ++i) {
@@ -452,14 +451,14 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
   };
   vector<SimilarityElements> & result = *images_similarity_elements[_global_rotation_method];
 
-  if (0) {
+  if (1) {
     if (result.empty()) {
       result.reserve(images_data.size());
       for (int i = 0; i < images_data.size(); i ++) {
         result.emplace_back(1, 0);
-        assert(result[i].scale == 1);
-        assert(result[i].theta == 0);
       }
+
+      result[1].theta = -2.263;
     }
   } else {
     if(result.empty()) {
@@ -469,6 +468,11 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
         result.emplace_back(fabs(camera_params[parameter.center_image_index].focal / camera_params[i].focal),
             -getEulerZXYRadians<float>(camera_params[i].R)[2]);
       }
+
+      for (int i = 0; i < images_data.size(); i ++) {
+        RED("[%d](%lf)", i, result[i].scale);
+      }
+
       double rotate_theta = parameter.center_image_rotation_angle;
       for(int i = 0; i < images_data.size(); ++i) {
         double a = (result[i].theta - rotate_theta) * 180 / M_PI;
@@ -477,6 +481,14 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
 
       const vector<pair<int, int> > & images_match_graph_pair_list = parameter.getImagesMatchGraphPairList();
       const vector<vector<pair<double, double> > > & images_relative_rotation_range = getImagesRelativeRotationRange();
+
+      for (int i = 0; i < images_match_graph_pair_list.size(); i ++) {
+        int m1 = images_match_graph_pair_list[i].first;
+        int m2 = images_match_graph_pair_list[i].second;
+        double theta_min = images_relative_rotation_range[m1][m2].first;
+        double theta_max = images_relative_rotation_range[m1][m2].second;
+        RED("[%d][%d](%lf, %lf)", m1, m2, theta_min, theta_max);
+      }
 
       switch (_global_rotation_method) {
         case GLOBAL_ROTATION_2D_METHOD:
@@ -586,7 +598,8 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
                 decision_theta = guess_theta;
                 weight = LAMBDA_GAMMA;
               } else {
-                decision_theta = getImagesMinimumLineDistortionRotation(m1, m2);
+                // decision_theta = getImagesMinimumLineDistortionRotation(m1, m2);
+                decision_theta = (images_relative_rotation_range[m1][m2].first + images_relative_rotation_range[m1][m2].second) / 2;// TODO
                 weight = 1;
               }
               triplets.emplace_back(equation    , DIMENSION_2D * m1    , weight *  cos(decision_theta));
@@ -605,6 +618,7 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
 
             for(int i = 0; i < images_data.size(); ++i) {
               result[i].theta = atan2(x[DIMENSION_2D * i + 1], x[DIMENSION_2D * i]);
+              RED("[%d]:%lf", i, result[i].theta);
             }
           }
           break;

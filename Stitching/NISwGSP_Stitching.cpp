@@ -50,39 +50,6 @@ Mat NISwGSP_Stitching::solve(const BLENDING_METHODS & _blend_method) {
 
   Mat result = multi_images.textureMapping(original_vertices, target_size, _blend_method);
 
-  /**
-    * TODO
-    */
-
-  RED("%ld", original_vertices.size());
-
-  int pm_index = 1;// TODO
-  int m1 = 0, m2 = 1;
-  Mat result_1;
-  Mat img1 = multi_images.images_data[m1].img;
-  Mat img2 = multi_images.images_data[m2].img;
-
-  result.copyTo(result_1);
-  for (int i = 0; i < multi_images.pairwise_matches[pm_index].matches.size(); i ++) {
-    int src  = multi_images.pairwise_matches[pm_index].matches[i].queryIdx;
-    int dest = multi_images.pairwise_matches[pm_index].matches[i].trainIdx;
-
-    Point2 src_p = original_vertices[m1][src];
-    // Point2 dest_p = multi_images.apap_matching_points[m2][m1][src];
-
-    Scalar color(rand() % 256, rand() % 256, rand() % 256);
-    Scalar color_1(255, 255, 0);
-    Scalar color_2(0, 255, 255);
-    circle(result_1, src_p, 3, color_1, -1);
-    // line(result_1, src_p, dest_p + Point2(img1.cols, 0), color, 1, LINE_AA);
-    // circle(result_1, dest_p + Point2(img1.cols, 0), 3, color_2, -1);
-  }
-  imwrite(multi_images.parameter.debug_dir + "mesh.jpg", result_1);
-
-  /**
-    * TODO
-    */
-
 #ifndef NDEBUG
   multi_images.writeResultWithMesh(result, original_vertices, "-[NISwGSP]" +
       GLOBAL_ROTATION_METHODS_NAME[getGlobalRotationMethod()] +
