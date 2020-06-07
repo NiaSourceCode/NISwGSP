@@ -61,7 +61,6 @@ enum GLOBAL_ROTATION_METHODS MeshOptimization::getGlobalRotationMethod() const {
 void MeshOptimization::reserveData(vector<Triplet<double> > & _triplets,
     vector<pair<int, double> > & _b_vector,
     const int _start_index) {
-  RED("reserveData");
   int equation = _start_index;
   const bool alignment_term = alignment_weight;
   const bool local_similarity_term = local_similarity_weight;

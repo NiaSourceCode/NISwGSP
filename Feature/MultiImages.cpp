@@ -451,7 +451,7 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
   };
   vector<SimilarityElements> & result = *images_similarity_elements[_global_rotation_method];
 
-  if (1) {
+  if (0) {
     if (result.empty()) {
       result.reserve(images_data.size());
       for (int i = 0; i < images_data.size(); i ++) {
@@ -591,6 +591,7 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
               const pair<int, int> & match_pair = images_match_graph_pair_list[i];
               const int & m1 = match_pair.first, & m2 = match_pair.second;
               const double guess_theta = result[m2].theta - result[m1].theta;
+              RED("%lf", guess_theta);
               FLOAT_TYPE decision_theta, weight;
               if(isRotationInTheRange(guess_theta,
                     images_relative_rotation_range[m1][m2].first,
@@ -598,8 +599,8 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
                 decision_theta = guess_theta;
                 weight = LAMBDA_GAMMA;
               } else {
-                // decision_theta = getImagesMinimumLineDistortionRotation(m1, m2);
-                decision_theta = (images_relative_rotation_range[m1][m2].first + images_relative_rotation_range[m1][m2].second) / 2;// TODO
+                decision_theta = getImagesMinimumLineDistortionRotation(m1, m2);
+                // decision_theta = (images_relative_rotation_range[m1][m2].first + images_relative_rotation_range[m1][m2].second) / 2;// TODO
                 weight = 1;
               }
               triplets.emplace_back(equation    , DIMENSION_2D * m1    , weight *  cos(decision_theta));
@@ -618,7 +619,6 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
 
             for(int i = 0; i < images_data.size(); ++i) {
               result[i].theta = atan2(x[DIMENSION_2D * i + 1], x[DIMENSION_2D * i]);
-              RED("[%d]:%lf", i, result[i].theta);
             }
           }
           break;
