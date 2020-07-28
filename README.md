@@ -21,7 +21,7 @@ sudo apt install libeigen3-dev
 将`OpenCVConfig.cmake`,`opencv-config.cmake`的路径添加到`OpenCV_DIR`
 
 ```bash
-export OpenCV_DIR=$OpenCV_DIR:/home/lynx/fuck_mount/opencv/install_dir/3_4_5/share/OpenCV
+export OpenCV_DIR=$OpenCV_DIR:~/fuck_mount/opencv/install_dir/3_4_5/share/OpenCV
 ```
 
 ### 编译

@@ -17,7 +17,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 
 #vlfeat
-set(VLFEAT_LIBRARY "${CMAKE_SOURCE_DIR}/vlfeat-0.9.20/bin/glnxa64/libvl.so")
+set(VLFEAT_LIBRARY "${CMAKE_SOURCE_DIR}/vlfeat-0.9.21/bin/glnxa64/libvl.so")
 
 aux_source_directory(./Debugger DEBUGGER_SRC)
 aux_source_directory(./Feature FEATURE_SRC)

@@ -46,7 +46,7 @@ using namespace cv;
 #include <eigen3/Eigen/IterativeLinearSolvers>
 using namespace Eigen;
 
-#include "vlfeat-0.9.20/vl/sift.h"
+#include "vlfeat-0.9.21/vl/sift.h"
 
 /******************************/
 /******* you may adjust *******/
