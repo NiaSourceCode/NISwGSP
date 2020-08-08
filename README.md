@@ -24,6 +24,12 @@ sudo apt install libeigen3-dev
 export OpenCV_DIR=$OpenCV_DIR:~/fuck_mount/opencv/install_dir/3_4_5/share/OpenCV
 ```
 
+- OMP
+
+```bash
+sudo apt install libomp-7-dev
+```
+
 ### 编译
 
 1. 准备第三方库
