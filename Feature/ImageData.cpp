@@ -102,15 +102,6 @@ const vector<LineData> & ImageData::getLines() const {
         lines_points[0].reserve(line_count);
         lines_points[1].reserve(line_count);
         
-        // TODO **************************8
-        RED("%ld %ld %ld %ld", lines.size(), lines_width.size(), lines_prec.size(), lines_nfa.size());
-        for (int i = 0; i < 20; i ++) {
-            RED("%lf %lf %lf %lf", lines[i][0], lines[i][1], lines[i][2], lines[i][3]);
-            RED("(%lf %lf %lf)", lines[i][2] - lines[i][0], lines[i][3] - lines[i][1], sqrt((lines[i][2] - lines[i][0])*(lines[i][2] - lines[i][0]) + (lines[i][3] - lines[i][1])*(lines[i][3] - lines[i][1])));
-            RED("%lf %lf", lines_width[i], lines_prec[i]);
-        }
-        // TODO ***********************
-
         for(int i = 0; i < line_count; ++i) {
             lines_points[0].emplace_back(lines[i][0], lines[i][1]);
             lines_points[1].emplace_back(lines[i][2], lines[i][3]);

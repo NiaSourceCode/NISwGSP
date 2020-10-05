@@ -27,6 +27,7 @@ void NISwGSP_Stitching::setWeightToGlobalSimilarityTerm(const double _weight_bet
 }
 
 Mat NISwGSP_Stitching::solve(const BLENDING_METHODS & _blend_method) {
+
   const MultiImages & multi_images = getMultiImages();
 
   vector<Triplet<double> > triplets;

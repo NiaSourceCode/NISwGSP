@@ -131,14 +131,19 @@ void MeshOptimization::prepareAlignmentTerm(vector<Triplet<double> > & _triplets
 
 void MeshOptimization::prepareSimilarityTerm(vector<Triplet<double> > & _triplets,
     vector<pair<int, double> > & _b_vector) const {
+
   const bool local_similarity_term = local_similarity_equation.second;
   const bool global_similarity_term = global_similarity_equation.second;
   if(local_similarity_term || global_similarity_term) {
     const vector<int> & images_vertices_start_index = multi_images->getImagesVerticesStartIndex();
     const vector<vector<double> > & images_grid_space_matching_pts_weight = multi_images->getImagesGridSpaceMatchingPointsWeight(global_similarity_weight_gamma);
+
+
     const vector<SimilarityElements> & images_similarity_elements = multi_images->getImagesSimilarityElements(global_rotation_method);
+
     int eq_count = 0, eq_count_rotation = 0;
     for(int i = 0; i < multi_images->images_data.size(); ++i) {// 1 -> N, 所有图片数
+
       const vector<Edge> & edges = multi_images->images_data[i].mesh_2d->getEdges();
       const vector<Point2> & vertices = multi_images->images_data[i].mesh_2d->getVertices();
       const vector<Indices> & v_neighbors = multi_images->images_data[i].mesh_2d->getVertexStructures();

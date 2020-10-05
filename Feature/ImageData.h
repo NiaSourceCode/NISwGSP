@@ -54,7 +54,7 @@ public:
     Mat img, rgba_img, alpha_mask;
     unique_ptr<Mesh2D> mesh_2d;
     
-private:
+// private:
     LINES_FILTER_FUNC * width_filter, * length_filter;
     
     mutable Mat grey_img;

@@ -93,11 +93,6 @@ void MultiImages::doFeatureMatching() const {
      * TODO
      */
 
-    RED("%ld %ld", images_data[m1].mesh_2d->getVertices().size(), images_data[m2].mesh_2d->getVertices().size());
-    RED("%ld %ld", apap_matching_points[m1][m2].size(), apap_matching_points[m2][m1].size());
-
-    // RED("[%d, %d]", m1, m2);
-
     Mat img1 = images_data[m1].img;
     Mat img2 = images_data[m2].img;
     Mat result_1, result_2;
@@ -273,7 +268,6 @@ const vector<detail::CameraParams> & MultiImages::getCameraParams() const {
       } else {
         Statistics::getMedianWithoutCopyData(image_focal_candidates[i], camera_params[i].focal);
       }
-      RED("[%d]: %lf", i, camera_params[i].focal);
     }
     /********************/
     /*** 3D Rotations ***/
@@ -469,10 +463,6 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
             -getEulerZXYRadians<float>(camera_params[i].R)[2]);
       }
 
-      for (int i = 0; i < images_data.size(); i ++) {
-        RED("[%d](%lf)", i, result[i].scale);
-      }
-
       double rotate_theta = parameter.center_image_rotation_angle;
       for(int i = 0; i < images_data.size(); ++i) {
         double a = (result[i].theta - rotate_theta) * 180 / M_PI;
@@ -482,17 +472,10 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
       const vector<pair<int, int> > & images_match_graph_pair_list = parameter.getImagesMatchGraphPairList();
       const vector<vector<pair<double, double> > > & images_relative_rotation_range = getImagesRelativeRotationRange();
 
-      for (int i = 0; i < images_match_graph_pair_list.size(); i ++) {
-        int m1 = images_match_graph_pair_list[i].first;
-        int m2 = images_match_graph_pair_list[i].second;
-        double theta_min = images_relative_rotation_range[m1][m2].first;
-        double theta_max = images_relative_rotation_range[m1][m2].second;
-        RED("[%d][%d](%lf, %lf)", m1, m2, theta_min, theta_max);
-      }
-
       switch (_global_rotation_method) {
         case GLOBAL_ROTATION_2D_METHOD:
           {
+            RED("2d method");
             class RotationNode {
               public:
                 int index, parent;
@@ -576,6 +559,8 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
           break;
         case GLOBAL_ROTATION_3D_METHOD:
           {
+            RED("3d method");
+
             const int equations_count = (int)images_match_graph_pair_list.size() * DIMENSION_2D + DIMENSION_2D;
             SparseMatrix<double> A(equations_count, images_data.size() * DIMENSION_2D);
             VectorXd b = VectorXd::Zero(equations_count);
@@ -591,7 +576,7 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
               const pair<int, int> & match_pair = images_match_graph_pair_list[i];
               const int & m1 = match_pair.first, & m2 = match_pair.second;
               const double guess_theta = result[m2].theta - result[m1].theta;
-              RED("%lf", guess_theta);
+
               FLOAT_TYPE decision_theta, weight;
               if(isRotationInTheRange(guess_theta,
                     images_relative_rotation_range[m1][m2].first,
@@ -603,6 +588,7 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
                 // decision_theta = (images_relative_rotation_range[m1][m2].first + images_relative_rotation_range[m1][m2].second) / 2;// TODO
                 weight = 1;
               }
+
               triplets.emplace_back(equation    , DIMENSION_2D * m1    , weight *  cos(decision_theta));
               triplets.emplace_back(equation    , DIMENSION_2D * m1 + 1, weight * -sin(decision_theta));
               triplets.emplace_back(equation    , DIMENSION_2D * m2    ,                       -weight);
@@ -630,11 +616,9 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
   }
   assert(result.size() == images_data.size());
 
-  // TODO
   for (int i = 0; i < result.size(); i ++) {
     RED("%d scale[%lf] theta[%lf]", i, result[i].scale, result[i].theta);
   }
-  // TODO
 
   return result;
 }
@@ -807,6 +791,7 @@ const vector<Point2> & MultiImages::getImagesLinesProject(const int _from, const
   if(images_lines_projects[_from][_to].empty()) {
     const vector<vector<vector<Point2> > > & feature_matches = getFeatureMatches();
     const vector<LineData> & lines = images_data[_from].getLines();
+    RED("line size %ld", lines.size());
     vector<Point2> points, project_points;
     points.reserve(lines.size() * EDGE_VERTEX_SIZE);
     for(int i = 0; i < lines.size(); ++i) {
@@ -1242,7 +1227,6 @@ void MultiImages::writeImageOfFeaturePairs(const string & _name,
 
   const vector<Point2> & m1_fpts = images_data[_match_pair.first ].getFeaturePoints();
   const vector<Point2> & m2_fpts = images_data[_match_pair.second].getFeaturePoints();
-  RED("%ld %ld", m1_fpts.size(), m2_fpts.size());
   vector<Point2> f1, f2;
   f1.reserve(_pairs.size());
   f2.reserve(_pairs.size());

@@ -78,6 +78,7 @@ Parameter::Parameter(const string & _file_name) {
   if(isFileExist(stitching_parse_file_name)) {
     const InputParser input_parser(stitching_parse_file_name);
 
+    /* 这些来源于宏定义 */
     global_homography_max_inliers_dist   = input_parser.get<double>("*global_homography_max_inliers_dist"  , &GLOBAL_HOMOGRAPHY_MAX_INLIERS_DIST);
     local_homogrpahy_max_inliers_dist    = input_parser.get<double>( "*local_homogrpahy_max_inliers_dist"  , &LOCAL_HOMOGRAPHY_MAX_INLIERS_DIST);
     local_homography_min_features_count  = input_parser.get<   int>( "*local_homography_min_features_count", &LOCAL_HOMOGRAPHY_MIN_FEATURES_COUNT);
