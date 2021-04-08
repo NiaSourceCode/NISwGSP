@@ -22,7 +22,7 @@
 using namespace std;
 
 #define LOG(format, ...) \
-  print_message("[%s, %d] " format, __func__, __LINE__, ## __VA_ARGS__)
+  printf("\033[1;36m" format "\33[0m\n", ## __VA_ARGS__)
 
 #define MAXFLOAT std::numeric_limits<double>::max()
 
@@ -66,7 +66,7 @@ const double  LOCAL_HOMOGRAPHY_MAX_INLIERS_DIST   = 3.;
 const    int  LOCAL_HOMOGRAPHY_MIN_FEATURES_COUNT = 40;
 
 /*** vlfeat sift ***/
-const    int SIFT_LEVEL_COUNT          = 3;
+const    int SIFT_LEVEL_COUNT          = 1;
 const    int SIFT_MINIMUM_OCTAVE_INDEX = 0;
 const double SIFT_PEAK_THRESH = 0.;
 const double SIFT_EDGE_THRESH = 10.;
