@@ -22,7 +22,7 @@
 using namespace std;
 
 #define LOG(format, ...) \
-  printf("\033[1;36m" format "\33[0m\n", ## __VA_ARGS__)
+  printf("\033[1;32m[%s, %d]" format "\33[0m\n", __func__, __LINE__, ## __VA_ARGS__)
 
 #define MAXFLOAT std::numeric_limits<double>::max()
 
