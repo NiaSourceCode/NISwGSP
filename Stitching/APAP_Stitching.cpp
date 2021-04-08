@@ -13,7 +13,7 @@ void APAP_Stitching::apap_project(const vector<Point2> & _p_src,
                                   const vector<Point2> & _src,
                                   vector<Point2>       & _dst,
                                   vector<Mat>          & _homographies) {
-    RED("%ld %ld", _p_src.size(), _src.size());
+    LOG("%ld %ld", _p_src.size(), _src.size());
     
     vector<Point2> nf1, nf2, cf1, cf2;
     Mat N1, N2, C1, C2;

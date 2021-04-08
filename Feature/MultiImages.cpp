@@ -475,7 +475,7 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
       switch (_global_rotation_method) {
         case GLOBAL_ROTATION_2D_METHOD:
           {
-            RED("2d method");
+            LOG("2d method");
             class RotationNode {
               public:
                 int index, parent;
@@ -559,7 +559,7 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
           break;
         case GLOBAL_ROTATION_3D_METHOD:
           {
-            RED("3d method");
+            LOG("3d method");
 
             const int equations_count = (int)images_match_graph_pair_list.size() * DIMENSION_2D + DIMENSION_2D;
             SparseMatrix<double> A(equations_count, images_data.size() * DIMENSION_2D);
@@ -617,7 +617,7 @@ const vector<SimilarityElements> & MultiImages::getImagesSimilarityElements(cons
   assert(result.size() == images_data.size());
 
   for (int i = 0; i < result.size(); i ++) {
-    RED("%d scale[%lf] theta[%lf]", i, result[i].scale, result[i].theta);
+    LOG("%d scale[%lf] theta[%lf]", i, result[i].scale, result[i].theta);
   }
 
   return result;
@@ -791,7 +791,7 @@ const vector<Point2> & MultiImages::getImagesLinesProject(const int _from, const
   if(images_lines_projects[_from][_to].empty()) {
     const vector<vector<vector<Point2> > > & feature_matches = getFeatureMatches();
     const vector<LineData> & lines = images_data[_from].getLines();
-    RED("line size %ld", lines.size());
+    LOG("line size %ld", lines.size());
     vector<Point2> points, project_points;
     points.reserve(lines.size() * EDGE_VERTEX_SIZE);
     for(int i = 0; i < lines.size(); ++i) {

@@ -21,12 +21,8 @@
 #include <set>
 using namespace std;
 
-// 自己的配置
-#define RED(format, ...) \
-  printf("\033[1;31m[%s, %d]" format "\33[0m\n", __func__, __LINE__, ## __VA_ARGS__)
-#define CYAN(format, ...) \
-  printf("\033[1;36m[%s, %d]" format "\33[0m\n", __func__, __LINE__, ## __VA_ARGS__)
-// 自己的配置 end
+#define LOG(format, ...) \
+  print_message("[%s, %d] " format, __func__, __LINE__, ## __VA_ARGS__)
 
 #define MAXFLOAT std::numeric_limits<double>::max()
 
